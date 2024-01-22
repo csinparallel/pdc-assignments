@@ -12,8 +12,8 @@
 
 #VGA      = 1
 X11      = 1
-XINCLUDE = /usr/X11/include
-XLIBS    = /usr/X11/lib
+XINCLUDE = /usr/include/X11
+XLIBS    = /usr/lib/X11
 
 COPTS    = -O3  -Wall  -D__dest_os=unix -fopenmp    # LS added openmp here
 CC       = gcc

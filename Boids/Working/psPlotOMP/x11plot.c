@@ -97,7 +97,9 @@ static void int_to_hexstr(int i, char *str)
 void x11plot_init(int width, int height, int levels)
 {
   XColor x_hardwarecolor;
-  char hex[8], name[16], *display;
+  // char hex[8],    // LS updated to use snprintf without warnings below
+  char hex[3]; 
+  char name[16], *display;
   int status, i;
 
   display = getenv("DISPLAY");
@@ -118,9 +120,14 @@ void x11plot_init(int width, int height, int levels)
     for(i = GRAY_LEVELS / 2; i < GRAY_LEVELS; i++) x_grays[i] = x_whitepixel;
   }
   else {
+    size_t buf_size = 16;  
+    // debug
+    printf("hex is: %s\n", hex);
     for(i = 0; i < GRAY_LEVELS; i++) {
       int_to_hexstr(i<<1, hex);
-      sprintf(name,"#%s%s%s",hex,hex,hex);
+      // sprintf(name,"#%s%s%s",hex,hex,hex);  
+      // LS updated for modern buffer overflow checks to avoid warning
+      snprintf(name, buf_size,"#%s%s%s",hex,hex,hex);
       status = XParseColor(x_display, x_colormap, name, &x_hardwarecolor);
       if (status != 0) {
         status = XAllocColor(x_display, x_colormap, &x_hardwarecolor);
