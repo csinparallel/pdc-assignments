@@ -21,14 +21,20 @@ The sequential code file called boids.c, based on Flake's original, is provided.
 
 compute_new_headings() is the function that applies the rules at each simulated time step.
 
-The main function calls compute_new_headings() for each simulated time step. The number of steps has a large default value of 100000000, so that you can observe the behavior changing over time and the flocks forming. You can change this and many other parameters- this is described fairly well in the main() function.
+The main function calls compute_new_headings() for each simulated time step. The number of steps has a large default value of 100000000, so that you can observe the behavior changing over time and see the flocks forming. You can change this and many other parameters- this is described fairly well in the main() function.
 
-TODO: add an example here of how the parameters work, show that threads has already been added in this version.
+TODO: add an example here of how the parameters work, show that threads has already been added in this version. Describe that the code already has timing built in.
 
 
 
 ## Your goal
+The decision made for each boid about where it should move next at each time step is independent-- it uses the current information about the boids near it to simply update its own new position and velocity. What this means is that the computations made for each boid during a particular time step can be executed in parallel. Multiple threads can split the work of updating each boid's new position, as long as those new positions and velocities are kept separately from the current positions. Once all new positions and velocities have been computed in parallel, then those new positions get copied into the current positions and velocities before starting the next time step.
 
+Study the code to find loops and determine which one can be split onto separate threads using the parallel for loop pattern. Add OpenMP pragma(s) to the code.
+
+TODO: add details about using parameters without the display to study the scalability of the code. Perhaps have them realize what portion remains sequential.
+
+## Necessary Background
 
 ## References
 <a id="1">[1]</a>

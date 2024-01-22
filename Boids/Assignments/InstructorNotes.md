@@ -4,7 +4,7 @@ Libby Shoop
 
 The original paper by Craig Reynolds [[1]](#1) is quite approachable and students may find it interesting. I recommend providing a copy for them (I can't include it here for copyright reasons). He is extremely enthusiastic about modeling nature and how he did it.
 
-The code written by Gary Flake can be found here: https://github.com/gwf/CBofN. It has many different examples. The boids code contained several global array variables. TODO: more here about when they helped and when they did not (check with Ethan)
+The C code written by Gary Flake can be found here: https://github.com/gwf/CBofN. It has many different examples. The boids code contained several global array variables. TODO: more here about when they helped and when they did not (check with Ethan)
 
 ## A stipulation: need for X graphics
 Flake's code included files to enable a graphical X window display of the boids as arrows moving around the screen. To run this version of the code from a linux server in our department, I have instructions for my students about how to use either XQuartz on a Mac and use ssh -X to connect, or from Windows I suggest that they use MobaXterm to connect and run the code over ssh. There are certainly other ways to accomplish this, such as running Windows subsystem for linux on your own Windows laptop, or providing linux lab machines.
