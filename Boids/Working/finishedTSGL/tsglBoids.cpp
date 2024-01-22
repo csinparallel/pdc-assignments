@@ -1,7 +1,15 @@
+/*
+Ethan Scheelk 
+Macalester College 2024-01-22
+escheelk@macalester.edu
+ethanScheelk@gmail.com
+*/
+
 #include <tsgl.h>
 #include "boids.hpp"
 #include "misc.h"
 #include <omp.h>
+#include "GetArguments.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,7 +41,7 @@ public:
             0, 0, 0,
             CYAN
         );
-        _can.add(_arrow.get());
+        _can.add(_arrow.get()); // Unfortunately the canvas wants a Drawable* rather than a smart pointer :|
     }
 
     /**
@@ -151,7 +159,7 @@ void initiateBoidDraw(
 
 /**
  * @brief Compute a single iteration of boid movement. No draw updates. 
- * Intended for testing.
+ * Intended for speed testing.
  * 
  * @param p 
  * @param xp 
@@ -205,7 +213,7 @@ void boidIteration (
  * @param yv 
  * @param xnv 
  * @param ynv 
- * @param boidDraw 
+ * @param boidDraw vector of boids, pre-created to exact size, to be passed by reference
  */
 void boidDrawIteration (
     boids::Params p,
@@ -217,11 +225,28 @@ void boidDrawIteration (
 {
     boids::compute_new_headings(p, xp, yp, xv, yv, xnv, ynv);
 
-    
-    // Pragma here to update boid positions and color for visualization
-    // #ifndef GPU
-    // #pragma acc parallel loop independent collapse(1) num_gangs(p.threads)
-    // #endif
+    /// \todo Make boid colors display
+    /*
+        REMOVE THIS
+        The student should do this by adding something along the lines of the following:
+
+        omp:
+            #pragma omp parallel for shared(...) collapse(1) num_threads(p.threads)
+        acc:
+            #pragma acc parallel loop independent collapse(1) num_gangs(p.threads)
+
+        Additionally, to set the color of the boids they must add the line:
+            boidDraw[i]->setColor(arr[omp_get_thread_num() % 8]);
+            (or something like it, must access thread num and set color based on it)
+
+        This properly shows which CPU thread is updating which boid since we
+        can have the reasonable expectation that, so long as we're using the 
+        same number of threads for each loop, each thread will be updating
+        the same boid, due to default implementation of block-splitting.
+    */
+    #ifndef GPU
+    #pragma acc parallel loop independent collapse(1) num_gangs(p.threads)
+    #endif
     for (int i = 0; i < p.num; ++i) {
         xv[i] = xnv[i];
         yv[i] = ynv[i];
@@ -248,6 +273,7 @@ void boidDrawIteration (
         boidDraw[i]->updatePosition(xp[i], yp[i]);
         boidDraw[i]->updateDirection(xv[i], yv[i]);
 
+        /// \todo Set color of boid
         boidDraw[i]->setColor(arr[omp_get_thread_num() % 8]);
     }
 }
@@ -264,10 +290,11 @@ void tsglScreen(Canvas& canvas) {
     initiateBoidDraw(p, boidDraw, xp, yp, xv, yv, canvas);
 
     while (canvas.isOpen()) {
-        // Slows down the canvas. 
-        // Keep if testing low boid counts
+        /*
+            Slows down the canvas. 
+            Keep if testing low boid counts
+        */
         // canvas.sleep();
-
 
         boidDrawIteration(p, xp, yp, xv, yv, xnv, ynv, boidDraw);
     }
@@ -285,14 +312,17 @@ int main(int argc, char* argv[]) {
     p.height = 1024;
 
     // First argument sets the number of boids
-    if (argc > 1) {
-        p.threads = atoi(argv[1]);
-    }
+    // if (argc > 1) {
+    //     p.threads = atoi(argv[1]);
+    // }
 
-    // Second argument sets the number of boids
-    if (argc > 2) {
-        p.num = atoi(argv[2]);
-    }
+    // // Second argument sets the number of boids
+    // if (argc > 2) {
+    //     p.num = atoi(argv[2]);
+    // }
+
+    get_arguments(argc, argv, p);
+    
 
     xp  = new float[p.num];
     yp  = new float[p.num];

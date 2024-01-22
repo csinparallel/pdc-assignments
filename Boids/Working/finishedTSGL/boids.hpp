@@ -47,7 +47,7 @@ namespace boids {
     // Remnant from psplot version
     // void draw_boid(struct Params p, int which, int color, float *xp, float *yp, float *xv, float *yv);
 
-    OPTION* setOptions(struct Params& params);
+    // OPTION* setOptions(struct Params& params);
 
 }
 #endif

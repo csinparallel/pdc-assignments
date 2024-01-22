@@ -151,40 +151,6 @@
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-OPTION* boids::setOptions(struct Params& params) {
-	OPTION options[] = {
-		{"-width", OPT_INT, &params.width, "Width of the plot in pixels."},
-		{"-height", OPT_INT, &params.height, "Height of the plot in pixels."},
-		{"-num", OPT_INT, &params.num, "Number of boids."},
-		{"-steps", OPT_INT, &params.steps, "Number of simulated steps."},
-		{"-seed", OPT_INT, &params.seed, "Random seed for initial state."},
-		{"-angle", OPT_DOUBLE, &params.angle, "Number of viewing degrees."},
-		{"-vangle", OPT_DOUBLE, &params.vangle, "Visual avoidance angle."},
-		{"-rcopy", OPT_DOUBLE, &params.rcopy, "Radius for copy vector."},
-		{"-rcent", OPT_DOUBLE, &params.rcent, "Radius for centroid vector."},
-		{"-rvoid", OPT_DOUBLE, &params.rvoid, "Radius for avoidance vector."},
-		{"-rviso", OPT_DOUBLE, &params.rviso, "Radius for visual avoidance vector."},
-		{"-wcopy", OPT_DOUBLE, &params.wcopy, "Weight for copy vector."},
-		{"-wcent", OPT_DOUBLE, &params.wcent, "Weight for centroid vector."},
-		{"-wvoid", OPT_DOUBLE, &params.wvoid, "Weight for avoidance vector."},
-		{"-wviso", OPT_DOUBLE, &params.wviso, "Weight for visual avoidance vector."},
-		// { "-wrand",  OPT_DOUBLE,  &params.wrand,  "Weight for random vector." },
-		{"-dt", OPT_DOUBLE, &params.dt, "Time-step increment."},
-		{"-ddt", OPT_DOUBLE, &params.ddt, "Momentum factor (0 < ddt < 1)."},
-		{"-minv", OPT_DOUBLE, &params.minv, "Minimum velocity."},
-		{"-len", OPT_INT, &params.len, "Tail length."},
-		{"-psdump", OPT_SWITCH, &params.psdump, "Dump PS at the very end?"},
-		{"-inv", OPT_SWITCH, &params.invert, "Invert all colors?"},
-		{"-mag", OPT_INT, &params.mag, "Magnification factor."},
-		{"-term", OPT_STRING, &params.term, "How to plot points."},
-		{"-t", OPT_INT, &params.threads, "Number of threads."},
-		{NULL, OPT_NULL, NULL, NULL}
-	};
-
-	return options;
-}
-
 /* Destructively normalize a vector. */
 
 void boids::norm(float* x, float* y)
@@ -205,9 +171,19 @@ void boids::norm(float* x, float* y)
    environment. */
 
 // void compute_new_heading(int which)
-//  LS note: the following function will work on all of the boids.
-//           This is needed so that the outer loop over all boids can
-//           be parallelized for all compilers, especially openacc.
+/**
+ * @brief LS note: the following function will work on all of the boids.
+ * This is needed so that the outer loop over all boids can
+ * be parallelized for all compilers, especially openacc.
+ * 
+ * @param p 
+ * @param xp 
+ * @param yp 
+ * @param xv 
+ * @param yv 
+ * @param xnv 
+ * @param ynv 
+ */
 void boids::compute_new_headings(
 	struct boids::Params p, float *xp, float *yp,
 	float *xv, float *yv,

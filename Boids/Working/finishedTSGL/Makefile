@@ -1,4 +1,4 @@
-all: tsglBoidsMP tsglBoidsGPU
+all: tsglBoidsMP # tsglBoidsGPU
 
 misc: misc.c
 	nvc -c -fast misc.c -o misc.o
@@ -11,7 +11,7 @@ boidsGPU: boids.cpp misc
 
 
 tsglBoidsMP: tsglBoids.cpp boidsMP misc
-	nvc++ -fast tsglBoids.cpp boidsMP.o misc.o -I$(TSGL_HOME)/include/TSGL -I$(TSGL_HOME)/include/freetype2 -ltsgl -lfreetype -lGLEW -lglfw -lGL -lGLU -o tsglBoidsMP -fopenmp -mp -acc=multicore -Minfo=opt -gopt
+	nvc++ -fast tsglBoids.cpp boidsMP.o misc.o GetArguments.o -I$(TSGL_HOME)/include/TSGL -I$(TSGL_HOME)/include/freetype2 -ltsgl -lfreetype -lGLEW -lglfw -lGL -lGLU -o tsglBoidsMP -fopenmp -mp -acc=multicore -Minfo=opt -gopt
 
 
 tsglBoidsGPU: tsglBoids.cpp boidsGPU misc
