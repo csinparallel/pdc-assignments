@@ -1,13 +1,17 @@
 all: tsglBoidsMP # tsglBoidsGPU
 
+
 arg: GetArguments.cpp GetArguments.hpp
 	g++ -c -o GetArguments.o GetArguments.cpp -Og
+
 
 misc: misc.c
 	nvc -c -fast misc.c -o misc.o
 
+
 boidsMP: boids.cpp misc
 	nvc++ -c -fast -fopenmp -mp -acc=multicore -Minfo=opt boids.cpp misc.o -o boidsMP.o
+
 
 boidsGPU: boids.cpp misc
 	nvc++ -c -fast -acc=gpu -gpu=managed -gpu=cc86 -Minfo=accel boids.cpp misc.o -o boidsGPU.o -DGPU
@@ -25,8 +29,5 @@ test: boids.cpp
 	nvc++ -fast tsglBoids.cpp boids.o misc.o -I$(TSGL_HOME)/include/TSGL -I$(TSGL_HOME)/include/freetype2 -ltsgl -lfreetype -lGLEW -lglfw -lGL -lGLU 
 
 
-# .PHONY clean
 clean:
 	rm -f *.o tsglBoidsGPU tsglBoidsMP
-
-#######################################################################

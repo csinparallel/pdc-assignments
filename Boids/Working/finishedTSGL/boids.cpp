@@ -1,3 +1,10 @@
+/*
+	Gary William Flake
+
+	modified by Libby Shoop
+
+	modified by Ethan Scheelk
+*/
 
 /* NAME
  *   boids - simulate a flock of android birds from Brooklyn
@@ -151,8 +158,12 @@
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-/* Destructively normalize a vector. */
-
+/**
+ * @brief Destructively normalize a vector.
+ * 
+ * @param x 
+ * @param y 
+ */
 void boids::norm(float* x, float* y)
 {
 	double len;
@@ -165,14 +176,42 @@ void boids::norm(float* x, float* y)
 	}
 }
 
+/**
+ * @brief Default parameters for the simulation
+ * 
+ * @return boids::Params 
+ */
+boids::Params boids::getDefaultParams()
+{
+	struct boids::Params defaultParams = 
+    {
+		.width = 1024, .height = 1024, 
+		.num = 512, .len = 20, 
+		.mag = 1, .seed = 0, 
+		.invert = 0, .steps = 1000, 
+		.psdump = 0, .angle = 270.0, 
+		.vangle = 90, .minv = 0.5, 
+		.ddt = 0.95, .dt = 3.0, 
+		.rcopy = 80, .rcent = 30, 
+		.rviso = 40, .rvoid = 15, 
+		.wcopy = 0.2, .wcent = 0.4, 
+		.wviso = 0.8, .wvoid = 1.0, .
+		threads = 1, .term = NULL
+    };
+
+	return defaultParams;
+}
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 /* Compute the heading for a particular boid based on its current
    environment. */
 
 // void compute_new_heading(int which)
+
 /**
- * @brief LS note: the following function will work on all of the boids.
+ * @brief Computes the hehadings for all boids.
+ * 
+ * LS note: the following function will work on all of the boids.
  * This is needed so that the outer loop over all boids can
  * be parallelized for all compilers, especially openacc.
  * 
@@ -192,6 +231,26 @@ void boids::compute_new_headings(
 
 	// for each boid, we will examine every other boid
 	// #pragma omp parallel for shared(xp, yp, xv, yv, xnv, ynv)
+	/*
+		REMOVE THIS
+		The student will be expected to parallelize this function.
+
+		They must identify that this loop is the one where the threads must be forked.
+
+		omp:
+			#pragma omp parallel for shared(...) collapse(1) num_threads(p.threads)
+		
+		acc:
+			#pragma acc parallel loop independent collapse(1) num_gangs(p.threads)
+
+		acc gpu:
+			#pragma acc kernels loop independent collapse(1)
+
+		
+		NOTE: The extra inside loops with collapse clauses can be important.
+		I don't remember the exact circumstance, but there was a case that required 
+		them in order for it to compile, likely the GPU parallel. 
+	*/
 	#ifdef GPU
 	#pragma acc kernels loop independent collapse(1)
 	#else
