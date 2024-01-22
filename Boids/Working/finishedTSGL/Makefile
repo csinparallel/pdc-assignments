@@ -1,5 +1,8 @@
 all: tsglBoidsMP # tsglBoidsGPU
 
+arg: GetArguments.cpp GetArguments.hpp
+	g++ -c -o GetArguments.o GetArguments.cpp -Og
+
 misc: misc.c
 	nvc -c -fast misc.c -o misc.o
 
