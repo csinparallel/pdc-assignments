@@ -1,6 +1,8 @@
 #executables
 boids
 
+settings.json
+
 # Prerequisites
 *.d
 

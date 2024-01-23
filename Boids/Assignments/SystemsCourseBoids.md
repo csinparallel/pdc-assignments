@@ -15,26 +15,62 @@ The provided file called *"GaryWilliamFlak_1998_163FlocksHerdsAndScho_TheComputa
 
 More details about weighting each rule and combining them are described in the pdf file.
 
-## Starting Point
+## Starting Point Code
 
-The sequential code file called boids.c, based on Flake's original, is provided. It has been modernized to remove Flake's use of global variables.
+Directory: psPlotOMP
+
+The code that you will be working with is a revised version of Flake's original code, which contained C code files that enabled an X11 window to display the boids moving on the canvas.
+
+The sequential code file called boids.c, based on Flake's original, is provided. It has been modernized to remove Flake's use of global variables. Here are a few notes about the boids.c code:
 
 compute_new_headings() is the function that applies the rules at each simulated time step.
 
-The main function calls compute_new_headings() for each simulated time step. The number of steps has a large default value of 100000000, so that you can observe the behavior changing over time and see the flocks forming. You can change this and many other parameters- this is described fairly well in the main() function.
+The main function calls compute_new_headings() for each simulated time step. The number of steps has a large default value of 100000000, so that you can observe the behavior changing over time and see the flocks forming. You can change this and many other parameters- this is described fairly well in the main() function, and some essential parameters are described below.
 
-TODO: add an example here of how the parameters work, show that threads has already been added in this version. Describe that the code already has timing built in.
+The Makefile is provided to build the *boids* program. It compiles and links in several other files that are primarily for the display. You shouldn't have to change these and **the file to concentrate on is boids.c**.
+
+
+Here is one way to run the code with 512 boids and a width and height of 1024 on the display window:
+
+        ./boids -width 1024 -height 1024 -num 512 
+
+The above will take a long time to run, because the number of steps is so large. The ctrl-c combination of characters should stop it. To run it with a certain number of steps, do this:
+
+        ./boids -width 1024 -height 1024 -num 512 -steps 1000
+
+Eventually, you will want to time your code without showing the display. To do this, add '-term none', like this:
+
+        ./boids -width 1024 -height 1024 -num 512 -steps 1000 -term none
+
+After 1000 steps, the result should like something this, where you can see that the boids, represented as arrows, have formed groups that are moving in a similar direction:
+
+<img src="boids-512-w1024-h1024.png"  width="512">
 
 
 
 ## Your goal
 The decision made for each boid about where it should move next at each time step is independent-- it uses the current information about the boids near it to simply update its own new position and velocity. What this means is that the computations made for each boid during a particular time step can be executed in parallel. Multiple threads can split the work of updating each boid's new position, as long as those new positions and velocities are kept separately from the current positions. Once all new positions and velocities have been computed in parallel, then those new positions get copied into the current positions and velocities before starting the next time step.
 
+The boids.c file already has code that sets the number of threads. You do this by using the -t flag, like this:
+
+        ./boids -width 1024 -height 1024 -num 512 -steps 1000 -term none -t 4
+
+**However, you need to add the capability of actually executing part of the code in parallel.**
+
+The code also already has timing built in using the OpenMP function omp_get_wtime(). This will enable you to study the scalability of your parallel solution.
+
 Study the code to find loops and determine which one can be split onto separate threads using the parallel for loop pattern. Add OpenMP pragma(s) to the code.
 
-TODO: add details about using parameters without the display to study the scalability of the code. Perhaps have them realize what portion remains sequential.
+Run the program with different scenarios to determine under what conditions the program scales well as you use more threads. In this case, changing the number of steps isn't relevant- just make sure that you use enough so that the flocking behavior is happening and that it runs for several seconds. Other factors are more relevant for determining when the program is scalable by using multiple threads. Noting which loop you ultimately chose to decompose the problem onto multiple threads can help you decide what parameter to change. 
+
+Write a report about the scalability of your solution, including under what conditions you see good speedup from the original sequential version.
+
 
 ## Necessary Background
+
+You need to have studied some examples from OpenMP to be able to apply them to this situation. One reference is the [PDC for Beginners book, chapter 1](https://www.learnpdc.org/PDCBeginners2e/1-sharedMemory/toctree.html), where you can see some OpenMP examples in action.
+
+To consider the scalability of your parallel solution, you might want to read about how this is determined in PDC programs by reading [PDC for Beginners book, chapter 0, section 3](https://www.learnpdc.org/PDCBeginners2e/0-introduction/3.performance.html).
 
 ## References
 <a id="1">[1]</a>
