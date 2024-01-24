@@ -121,8 +121,6 @@ void x11plot_init(int width, int height, int levels)
   }
   else {
     size_t buf_size = 16;  
-    // debug
-    printf("hex is: %s\n", hex);
     for(i = 0; i < GRAY_LEVELS; i++) {
       int_to_hexstr(i<<1, hex);
       // sprintf(name,"#%s%s%s",hex,hex,hex);  

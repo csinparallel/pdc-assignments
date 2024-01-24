@@ -123,7 +123,9 @@ static void hsb_to_rgb(double hue, int *R, int *G, int *B)
 void X11plot_init(int width, int height, int levels)
 {
   XColor x_hardwarecolor;
-  char hexR[8], hexG[8], hexB[8], name[16], *display;
+    // char hexR[8], hexG[8], hexB[8]; // LS changed for sprintf warnings
+  char hexR[3], hexG[3], hexB[3];
+  char name[16], *display;
   int status, i, R, G, B;
   double hue;
 
