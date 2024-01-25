@@ -1,5 +1,5 @@
-#ifndef GETARGUMENTs_HPP
-#define GETARGUMENTs_HPP
+#ifndef GETARGUMENTS_HPP
+#define GETARGUMENTS_HPP
 
 #include "boids.hpp"
 

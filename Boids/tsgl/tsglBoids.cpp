@@ -1,8 +1,6 @@
 /*
-Ethan Scheelk
-Macalester College 2024-01-22
-escheelk@macalester.edu
-ethanScheelk@gmail.com
+    Ethan Scheelk
+    2024-01-24
 */
 
 #include <tsgl.h>
@@ -216,29 +214,7 @@ void boidDrawIteration(
     std::vector<std::unique_ptr<boid>> &boidDraw)
 {
     boids::compute_new_headings(p, xp, yp, xv, yv, xnv, ynv);
-
-/// \todo Make boid colors display
-/*
-    REMOVE THIS
-    The student should do this by adding something along the lines of the following:
-
-    omp:
-        #pragma omp parallel for shared(...) collapse(1) num_threads(p.threads)
-    acc:
-        #pragma acc parallel loop independent collapse(1) num_gangs(p.threads)
-
-    Additionally, to set the color of the boids they must add the line:
-        boidDraw[i]->setColor(arr[omp_get_thread_num() % 8]);
-        (or something like it, must access thread num and set color based on it)
-
-    This properly shows which CPU thread is updating which boid since we
-    can have the reasonable expectation that, so long as we're using the
-    same number of threads for each loop, each thread will be updating
-    the same boid, due to default implementation of block-splitting.
-*/
-#ifndef GPU
-#pragma acc parallel loop independent collapse(1) num_gangs(p.threads)
-#endif
+    
     for (int i = 0; i < p.num; ++i)
     {
         xv[i] = xnv[i];
@@ -268,7 +244,6 @@ void boidDrawIteration(
         boidDraw[i]->updatePosition(xp[i], yp[i]);
         boidDraw[i]->updateDirection(xv[i], yv[i]);
 
-        /// \todo Set color of boid
         boidDraw[i]->setColor(arr[omp_get_thread_num() % 8]);
     }
 }
@@ -297,13 +272,41 @@ void tsglScreen(Canvas &canvas)
     }
 }
 
+/**
+ * @brief Prints a hello messagee to stderr based on the compilation method
+ *
+ * Notice the -D__ trailing the Make lines. That declares a compiler definition
+ * such as OMP with -DOMP, MC with -DMC, or GPU with -DGPU.
+ *
+ */
+void printHello()
+{
+    #if defined(OMP) || defined(MC)
+    fprintf(stderr, "Running on the CPU with ");
+    #endif
+
+    #if defined(OMP) && !defined(MC)
+    fprintf(stderr, "OpenMP!\n");
+    #elif defined(MC) && !defined(OMP)
+    fprintf(stderr, "OpenACC MultiCore!\n");
+    #endif
+
+    #if defined(GPU) && !defined(OMP) && !defined(MC)
+    fprintf(stderr, "Running on the GPU with OpenACC GPU!\n");
+    #endif
+}
+
 int main(int argc, char *argv[])
 {
+    printHello();
+
     p = boids::getDefaultParams();
 
     bool noDraw = false;
 
     get_arguments(argc, argv, p, noDraw);
+
+    srandom(p.seed);
 
     xp = new float[p.num];
     yp = new float[p.num];

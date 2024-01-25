@@ -109,11 +109,11 @@ void     scan_flush(SCANNER *scanner);
 /* Prototypes for plot routines that are device independent. */
 
 void plot_init(int width, int height, int levels, char *term);
-void plot_point(float x, float y, int val);
-void plot_set_range(float xmin, float xmax, float ymin, float ymax);
+void plot_point(double x, double y, int val);
+void plot_set_range(double xmin, double xmax, double ymin, double ymax);
 void plot_set_all(int val);
-void plot_box(float ulx, float uly, float lrx, float lry, int lwidth);
-void plot_line(float x1, float y1, float x2, float y2, int val);
+void plot_box(double ulx, double uly, double lrx, double lry, int lwidth);
+void plot_line(double x1, double y1, double x2, double y2, int val);
 void plot_finish(void);
 
 extern int plot_inverse, plot_mag;
@@ -124,8 +124,8 @@ extern int plot_inverse, plot_mag;
 
 /* Random number functions. */
 
-float random_range(float low, float high);
-float random_gauss(void);
+double random_range(double low, double high);
+double random_gauss(void);
 
 
 /* Function to get memory with check for failure built in. */

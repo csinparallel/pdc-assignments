@@ -196,7 +196,6 @@ void compute_new_headings(struct Params p, double *xp, double *yp,
 	// for each boid, we will examine every other boid
 	for (int which = 0; which < p.num; which++)
 	{
-		// variables declared in this block become private when using pragmas
 		// int i, j, k,
 		int numcent = 0;
 		double xa, ya, xb, yb, xc, yc, xd, yd, xt, yt;

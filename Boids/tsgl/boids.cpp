@@ -3,7 +3,7 @@
 
 	modified by Libby Shoop
 
-	modified by Ethan Scheelk
+	modified by Ethan Scheelk 2024-01-24
 */
 
 /* NAME
@@ -228,40 +228,9 @@ void boids::compute_new_headings(
 	float *xv, float *yv,
 	float *xnv, float *ynv)
 {
-
 	// for each boid, we will examine every other boid
-	// #pragma omp parallel for shared(xp, yp, xv, yv, xnv, ynv)
-	/*
-		REMOVE THIS
-		The student will be expected to parallelize this function.
-
-		They must identify that this loop is the one where the threads must be forked.
-
-		omp:
-			#pragma omp parallel for shared(...) collapse(1) num_threads(p.threads)
-		
-		acc:
-			#pragma acc parallel loop independent collapse(1) num_gangs(p.threads)
-
-		acc gpu:
-			#pragma acc kernels loop independent collapse(1)
-
-		
-		NOTE: The extra inside loops with collapse clauses can be important.
-		I don't remember the exact circumstance, but there was a case that required 
-		them in order for it to compile, likely the GPU parallel. 
-	*/
-	// #ifdef GPU
-	// #pragma acc kernels loop independent collapse(1)
-	// #else
-	// #pragma acc parallel loop independent collapse(1) num_gangs(p.threads)
-	// #endif
-	#pragma omp parallel for collapse(1) shared(xp, yp, xv, yv, xnv, ynv) num_threads(p.threads)
 	for (int which = 0; which < p.num; which++)
 	{
-		// printf("\twhich %d\n", which);
-
-		// variables declared in this block become private when using pragmas
 		// int i, j, k,
 		int numcent = 0;
 		float xa, ya, xb, yb, xc, yc, xd, yd, xt, yt;
@@ -289,7 +258,6 @@ void boids::compute_new_headings(
 		///////////////////////////////////////////////////////////////////////
 		/* For every boid... */
 
-		// #pragma omp collapse(1)		
 		for (int i = 0; i < p.num; i++)
 		{
 
@@ -306,7 +274,6 @@ void boids::compute_new_headings(
 			 */
 			mindist = 10e10;
 
-			// #pragma omp collapse(2)
 			for (int j = -p.width; j <= p.width; j += p.width)
 				for (int k = -p.height; k <= p.height; k += p.height)
 				{
@@ -515,7 +482,8 @@ void boids::compute_new_headings(
 
 // 	// LS use struct for default parameters
 
-// 	char* help_string = "Simulate a flock of boids according to rules that determine their 
+// 	char* help_string = "
+// Simulate a flock of boids according to rules that determine their 
 // individual behaviors as well as the ``physics'' of their universe. 
 // A boid greedily attempts to apply four rules with respect to its 
 // neighbors: it wants to fly in the same direction, be in the center 

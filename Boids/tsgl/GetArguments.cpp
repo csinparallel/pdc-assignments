@@ -1,6 +1,8 @@
 /*
     Ethan Scheelk
+    2024-01-24
 */
+
 #include <getopt.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -63,9 +65,6 @@ void get_arguments(int argc, char *argv[], boids::Params &p, bool& noDraw)
         {"noDraw", no_argument, nullptr, NO_DRAW},
         {0}};
 
-    // int* intArgs[] = {&p.width, &p.height, &p.num, &p.threads, &p.steps, &p.seed};
-    // double* floatArgs[] = {&p.angle, &p.vangle, &p.rcopy, &p.rcent, &p.rvoid, &p.rviso, &p.wcopy, &p.wvoid, &p.wviso, &p.dt, &p.ddt, &p.minv};
-
     int c;
 
     while (true)
@@ -78,18 +77,6 @@ void get_arguments(int argc, char *argv[], boids::Params &p, bool& noDraw)
         {
             break;
         }
-
-        // printf("%s\t%s\n", longopts[option_index].name, optarg);
-
-        // if (c <= 5)
-        // {
-        //     *intArgs[c] = atoi(optarg);
-        // }
-
-        // else
-        // {
-        //     *floatArgs[c-6] = atof(optarg);
-        // }
 
         // Highly repetitive but easy to understand.
         switch (c)
@@ -149,15 +136,13 @@ void get_arguments(int argc, char *argv[], boids::Params &p, bool& noDraw)
             p.minv = atof(optarg);
             break;
         case SEED:
-            p.seed = atof(optarg);
+            p.seed = atoi(optarg);
             break;
         case NO_DRAW:
             noDraw = true;
             break;
         default:
-            // fprintf(stderr, "Argument [%s] with value [%s] not identifed\n", argv[optind - 1], optarg);
-
-            // fprintf(stderr, "Argument not found\n");
+            // getopt library automatically says when a command wasn't recognized
             break;
         }
     }
