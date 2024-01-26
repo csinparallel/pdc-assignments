@@ -24,7 +24,7 @@
  *               in.
  *   
  *      Avoidance: ``Please don't stand so close to me.''
-                  Move away from any close flyers.
+ *                 Move away from any close flyers.
  *   
  *      Visual: move in such a way that the bonehead
  *              obstructing your view no longer interferes.
@@ -58,18 +58,6 @@
 #include "misc.h"
 #include "omp.h"
 
-// LS The following variables are all global. Make a struct and use in main
-// int width = 640, height = 480, num = 20, len = 20, mag = 1;
-// int seed = 0, invert = 0, steps = 100000000, psdump = 0;
-
-// double angle = 270.0, vangle = 90, minv = 0.5, ddt = 0.95, dt = 3.0;
-// double rcopy = 80, rcent = 30, rviso = 40, rvoid = 15;
-// double wcopy = 0.2, wcent = 0.4, wviso = 0.8, wvoid = 1.0, wrand = 0.0;
-
-// int threads = 1;
-
-// char *term = NULL;
-
 // LS the struct for simulation parameters
 struct Params {
   int width;
@@ -101,59 +89,6 @@ struct Params {
 
   char *term;
 };
-
-// char help_string[] = "\
-// Simulate a flock of boids according to rules that determine their \
-// individual behaviors as well as the ``physics'' of their universe. \
-// A boid greedily attempts to apply four rules with respect to its \
-// neighbors: it wants to fly in the same direction, be in the center \
-// of the local cluster of boids, avoid collisions with boids too close, \
-// and maintain a clear view ahead by skirting around others that block \
-// its view.  Changing these rules can make the boids behave like birds, \
-// gnats, bees, fish, or magnetic particles.  See the RULES section of \
-// the manual pages for more details.\
-// ";
-
-// OPTION options[] = {
-//   { "-width",  OPT_INT,     &width,  "Width of the plot in pixels." },
-//   { "-height", OPT_INT,     &height, "Height of the plot in pixels." },
-//   { "-num",    OPT_INT,     &num,    "Number of boids." },
-//   { "-steps",  OPT_INT,     &steps,  "Number of simulated steps." },
-//   { "-seed",   OPT_INT,     &seed,   "Random seed for initial state." },
-//   { "-angle",  OPT_DOUBLE,  &angle,  "Number of viewing degrees." },
-//   { "-vangle", OPT_DOUBLE,  &vangle, "Visual avoidance angle." },
-//   { "-rcopy",  OPT_DOUBLE,  &rcopy,  "Radius for copy vector." },
-//   { "-rcent",  OPT_DOUBLE,  &rcent,  "Radius for centroid vector." },
-//   { "-rvoid",  OPT_DOUBLE,  &rvoid,  "Radius for avoidance vector." },
-//   { "-rviso",  OPT_DOUBLE,  &rviso,  "Radius for visual avoidance vector." },
-//   { "-wcopy",  OPT_DOUBLE,  &wcopy,  "Weight for copy vector." },
-//   { "-wcent",  OPT_DOUBLE,  &wcent,  "Weight for centroid vector." },
-//   { "-wvoid",  OPT_DOUBLE,  &wvoid,  "Weight for avoidance vector." },
-//   { "-wviso",  OPT_DOUBLE,  &wviso,  "Weight for visual avoidance vector." },
-//   // { "-wrand",  OPT_DOUBLE,  &wrand,  "Weight for random vector." },
-//   { "-dt",     OPT_DOUBLE,  &dt,     "Time-step increment." },
-//   { "-ddt",    OPT_DOUBLE,  &ddt,    "Momentum factor (0 < ddt < 1)." },
-//   { "-minv",   OPT_DOUBLE,  &minv,   "Minimum velocity." },
-//   { "-len",    OPT_INT,     &len,    "Tail length." },
-//   { "-psdump", OPT_SWITCH,  &psdump, "Dump PS at the very end?" },
-//   { "-inv",    OPT_SWITCH,  &invert, "Invert all colors?" },
-//   { "-mag",    OPT_INT,     &mag,    "Magnification factor." },
-//   { "-term",   OPT_STRING,  &term,   "How to plot points." },
-//   { "-t",      OPT_INT,     &threads, "Number of threads." },
-//   { NULL,      OPT_NULL,    NULL,    NULL }
-// };
-
-// LS Note: wrand is ignored for simplicity, so we are not generating random
-//          numbers during flight simulation.
-
-/* These are global to avoid passing them around all of time.  They
-   represent the boids (x, y) positions, velocity vectors, and new
-   velocity vectors. */
-
-// LS Note: Better code practice to have these arrays declared 
-//          in main instead of global.
-// double *xp, *yp, *xv, *yv, *xnv, *ynv;
-
 
 /* Some handy macros ... */
 
@@ -494,13 +429,10 @@ OPTION options[] = {
   // LS eliminate global variables by declaring here
   double *xp, *yp, *xv, *yv, *xnv, *ynv;
 
-  // LS debug
-  fprintf(stderr, "Before options, Number of boids: %d\n", params.num);
-
   get_options(argc, argv, options, help_string);
 
-  // LS debug
-  fprintf(stderr, "After options, Number of boids: %d\n", params.num);
+  // LS basic info 
+  fprintf(stderr, "%s, Number of boids: %d, number of steps: %d\n", argv[0], params.num, params.steps);
 
   // LS added this for debugging and Threads set
   // fprintf(stderr, "Number of threads: %d\n", threads);
@@ -542,15 +474,15 @@ OPTION options[] = {
   /* For each time step... */
   for(i = 0; i < params.steps; i++) {
 
+    // for debugging, before
     // printf("0ts%d %f, %f, %f, %f, %f, %f, %d, %d\n", i, xp[0], yp[0], xv[0], yv[0], xnv[0], ynv[0], params.width,params.height);
 
     compute_new_headings(params, xp, yp, xv, yv, xnv, ynv);
     // /* For each boid, compute its new heading. */
+
+    // for debugging, xnv and ynv should have new values
+    // printf("0ts%d %f, %f, %f, %f, %f, %f, %d, %d\n", i, xp[0], yp[0], xv[0], yv[0], xnv[0], ynv[0], params.width,params.height);
     
-    // for(j = 0; j < num; j++) {
-    //   compute_new_heading(j, xp, yp, xv, yv, xnv, ynv);
-    // }
-    // printf("1ts%d %f, %f, %f, %f, %f, %f, %d, %d\n", i, xp[0], yp[0], xv[0], yv[0], xnv[0], ynv[0], params.width,params.height);
     /* For each boid again... */
     for(j = 0; j < params.num; j++) {
 
@@ -573,6 +505,7 @@ OPTION options[] = {
       if(!params.psdump) draw_boid(params, j, 1, xp, yp, xv, yv);
      
     }
+    // for debugging, xv, yv and xp, yp should have new values
     // printf("2ts%d %f, %f, %f, %f, %f, %f, %d, %d\n", i, xp[0], yp[0], xv[0], yv[0], xnv[0], ynv[0], params.width,params.height);
 
   }
@@ -580,6 +513,7 @@ OPTION options[] = {
   end = omp_get_wtime();
   fprintf(stderr, "Total time: %f seconds\n", end - start);
 
+  // check for end position of boid 0
   printf("%f, %f\n", xp[0], yp[0]);
 
   if(!params.psdump) plot_finish();
