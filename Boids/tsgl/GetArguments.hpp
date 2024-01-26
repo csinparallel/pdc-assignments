@@ -1,8 +1,9 @@
-#ifndef GETARGUMENTS_HPP
-#define GETARGUMENTS_HPP
+#ifndef GETARGUMENTs_HPP
+#define GETARGUMENTs_HPP
 
 #include "boids.hpp"
 
 void get_arguments(int argc, char* argv[], boids::Params& p, bool& noDraw);
+void print_help();
 
 #endif
