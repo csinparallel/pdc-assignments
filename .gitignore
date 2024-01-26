@@ -1,5 +1,7 @@
 #executables
 boids
+boids_acc
+tsglBoidsOMP
 
 settings.json
 
