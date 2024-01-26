@@ -17,8 +17,26 @@
 #include "misc.h"
 
 /* A little buffer for formatting option help string entries. */
-
 #define BUFFERLEN 4096
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+/**
+ * @brief Give a low and a high value.
+ * This is the only function used here
+ * 
+ * @param low 
+ * @param high 
+ * @return float 
+ */
+float random_range(float low, float high)
+{
+	float tmp;
+
+	tmp = fabs((float)(random()) / ((float)RAND_MAX + 1));
+	tmp = tmp * (high - low) + low;
+	return (tmp);
+}
+
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
@@ -364,16 +382,7 @@ void *xmalloc(size_t bytes)
 	return (ptr);
 }
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-float random_range(float low, float high)
-{
-	float tmp;
-
-	tmp = fabs((float)(random()) / ((float)RAND_MAX + 1));
-	tmp = tmp * (high - low) + low;
-	return (tmp);
-}
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 

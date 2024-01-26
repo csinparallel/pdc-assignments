@@ -1,6 +1,8 @@
 /*
-    Ethan Scheelk
-    2024-01-24
+Ethan Scheelk
+Macalester College 2024-01-22
+escheelk@macalester.edu
+ethanScheelk@gmail.com
 */
 
 #include <tsgl.h>
@@ -214,7 +216,7 @@ void boidDrawIteration(
     std::vector<std::unique_ptr<boid>> &boidDraw)
 {
     boids::compute_new_headings(p, xp, yp, xv, yv, xnv, ynv);
-    
+
     for (int i = 0; i < p.num; ++i)
     {
         xv[i] = xnv[i];
@@ -243,8 +245,6 @@ void boidDrawIteration(
 
         boidDraw[i]->updatePosition(xp[i], yp[i]);
         boidDraw[i]->updateDirection(xv[i], yv[i]);
-
-        boidDraw[i]->setColor(arr[omp_get_thread_num() % 8]);
     }
 }
 
@@ -273,11 +273,11 @@ void tsglScreen(Canvas &canvas)
 }
 
 /**
- * @brief Prints a hello messagee to stderr based on the compilation method
- *
+ * @brief Prints a hello message to stderr based on the compilation method
+ * 
  * Notice the -D__ trailing the Make lines. That declares a compiler definition
- * such as OMP with -DOMP, MC with -DMC, or GPU with -DGPU.
- *
+ * such as OMP with -DOMP, MC with -DMC, and GPU with -DGPU.
+ * 
  */
 void printHello()
 {
@@ -304,8 +304,8 @@ int main(int argc, char *argv[])
 
     bool noDraw = false;
 
+    // Type -help at runtime for description of inputs
     get_arguments(argc, argv, p, noDraw);
-
     srandom(p.seed);
 
     xp = new float[p.num];

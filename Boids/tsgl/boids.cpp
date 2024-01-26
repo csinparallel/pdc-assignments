@@ -1,11 +1,3 @@
-/*
-	Gary William Flake
-
-	modified by Libby Shoop
-
-	modified by Ethan Scheelk 2024-01-24
-*/
-
 /* NAME
  *   boids - simulate a flock of android birds from Brooklyn
  * NOTES
@@ -55,108 +47,20 @@
  *   Permission granted for any use according to the standard GNU
  *   ``copyleft'' agreement provided that the author's comments are
  *   neither modified nor removed.  No warranty is given or implied.
+ * 
+ * 	Modified by Libby Shoop, Ethan Scheelk
+ * 	for Peachy Parallel Assignments EduPar2024
+ * 	2024-01-25
  */
-
-// Modified by Libby Shoop (LS)  for Macalester COllege COMP 445
 
 
 #include <cmath>
 #include <stdio.h>
 #include <stdlib.h>
-#include "misc.h"
-
-
 #include <omp.h>
-
+#include "misc.h"
 #include "boids.hpp"
 
-// struct boids::Params defaultParams = 
-//     {
-// 		.width = 640, .height = 480, 
-// 		.num = 20, .len = 20, 
-// 		.mag = 1, .seed = 0, 
-// 		.invert = 0, .steps = 100000000, 
-// 		.psdump = 0, .angle = 270.0, 
-// 		.vangle = 90, .minv = 0.5, 
-// 		.ddt = 0.95, .dt = 3.0, 
-// 		.rcopy = 80, .rcent = 30, 
-// 		.rviso = 40, .rvoid = 15, 
-// 		.wcopy = 0.2, .wcent = 0.4, 
-// 		.wviso = 0.8, .wvoid = 1.0, .
-// 		threads = 1, .term = NULL
-//     };
-
-// LS The following variables are all global. Make a struct and use in main
-// int width = 640, height = 480, num = 20, len = 20, mag = 1;
-// int seed = 0, invert = 0, steps = 100000000, psdump = 0;
-
-// double angle = 270.0, vangle = 90, minv = 0.5, ddt = 0.95, dt = 3.0;
-// double rcopy = 80, rcent = 30, rviso = 40, rvoid = 15;
-// double wcopy = 0.2, wcent = 0.4, wviso = 0.8, wvoid = 1.0, wrand = 0.0;
-
-// int threads = 1;
-
-// char *term = NULL;
-
-// LS the struct for simulation parameters
-
-/*
-// char help_string[] = "\
-// Simulate a flock of boids according to rules that determine their \
-// individual behaviors as well as the ``physics'' of their universe. \
-// A boid greedily attempts to apply four rules with respect to its \
-// neighbors: it wants to fly in the same direction, be in the center \
-// of the local cluster of boids, avoid collisions with boids too close, \
-// and maintain a clear view ahead by skirting around others that block \
-// its view.  Changing these rules can make the boids behave like birds, \
-// gnats, bees, fish, or magnetic particles.  See the RULES section of \
-// the manual pages for more details.\
-// ";
-
-// OPTION options[] = {
-//   { "-width",  OPT_INT,     &width,  "Width of the plot in pixels." },
-//   { "-height", OPT_INT,     &height, "Height of the plot in pixels." },
-//   { "-num",    OPT_INT,     &num,    "Number of boids." },
-//   { "-steps",  OPT_INT,     &steps,  "Number of simulated steps." },
-//   { "-seed",   OPT_INT,     &seed,   "Random seed for initial state." },
-//   { "-angle",  OPT_DOUBLE,  &angle,  "Number of viewing degrees." },
-//   { "-vangle", OPT_DOUBLE,  &vangle, "Visual avoidance angle." },
-//   { "-rcopy",  OPT_DOUBLE,  &rcopy,  "Radius for copy vector." },
-//   { "-rcent",  OPT_DOUBLE,  &rcent,  "Radius for centroid vector." },
-//   { "-rvoid",  OPT_DOUBLE,  &rvoid,  "Radius for avoidance vector." },
-//   { "-rviso",  OPT_DOUBLE,  &rviso,  "Radius for visual avoidance vector." },
-//   { "-wcopy",  OPT_DOUBLE,  &wcopy,  "Weight for copy vector." },
-//   { "-wcent",  OPT_DOUBLE,  &wcent,  "Weight for centroid vector." },
-//   { "-wvoid",  OPT_DOUBLE,  &wvoid,  "Weight for avoidance vector." },
-//   { "-wviso",  OPT_DOUBLE,  &wviso,  "Weight for visual avoidance vector." },
-//   // { "-wrand",  OPT_DOUBLE,  &wrand,  "Weight for random vector." },
-//   { "-dt",     OPT_DOUBLE,  &dt,     "Time-step increment." },
-//   { "-ddt",    OPT_DOUBLE,  &ddt,    "Momentum factor (0 < ddt < 1)." },
-//   { "-minv",   OPT_DOUBLE,  &minv,   "Minimum velocity." },
-//   { "-len",    OPT_INT,     &len,    "Tail length." },
-//   { "-psdump", OPT_SWITCH,  &psdump, "Dump PS at the very end?" },
-//   { "-inv",    OPT_SWITCH,  &invert, "Invert all colors?" },
-//   { "-mag",    OPT_INT,     &mag,    "Magnification factor." },
-//   { "-term",   OPT_STRING,  &term,   "How to plot points." },
-//   { "-t",      OPT_INT,     &threads, "Number of threads." },
-//   { NULL,      OPT_NULL,    NULL,    NULL }
-// };
-*/
-
-// LS Note: wrand is ignored for simplicity, so we are not generating random
-//          numbers during flight simulation.
-
-/* These are global to avoid passing them around all of time.  They
-   represent the boids (x, y) positions, velocity vectors, and new
-   velocity vectors. */
-
-// LS Note: Better code practice to have these arrays declared
-//          in main instead of global.
-// double *xp, *yp, *xv, *yv, *xnv, *ynv;
-
-/* Some handy macros ... */
-
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 /**
  * @brief Destructively normalize a vector.
@@ -201,12 +105,6 @@ boids::Params boids::getDefaultParams()
 
 	return defaultParams;
 }
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-/* Compute the heading for a particular boid based on its current
-   environment. */
-
-// void compute_new_heading(int which)
 
 /**
  * @brief Computes the hehadings for all boids.
@@ -228,6 +126,7 @@ void boids::compute_new_headings(
 	float *xv, float *yv,
 	float *xnv, float *ynv)
 {
+
 	// for each boid, we will examine every other boid
 	for (int which = 0; which < p.num; which++)
 	{
@@ -250,14 +149,7 @@ void boids::compute_new_headings(
 		/* These are the accumulated change vectors for the four rules. */
 		xa = ya = xb = yb = xc = yc = xd = yd = 0;
 
-		///////////////////////////////////////////////////////////////////////
-		// LS NOTE: this calculation is independent in each step
-		// so that it can be distributed among threads, each working on a
-		// subset of boids. Each boid in outer loop is examining all other boids
-		// in this inner loop.
-		///////////////////////////////////////////////////////////////////////
 		/* For every boid... */
-
 		for (int i = 0; i < p.num; i++)
 		{
 
@@ -434,187 +326,3 @@ void boids::compute_new_headings(
 		}
 	}
 }
-
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-// void boids::draw_boid(struct boids::Params p, int which, int color, float *xp, float *yp,
-// 			   float *xv, float *yv)
-// {
-// 	float x1, x2, x3, y1, y2, y3, a, t;
-
-// 	/* Plot a line in the direction that it is heading. */
-// 	x3 = xv[which];
-// 	y3 = yv[which];
-// 	norm(&x3, &y3);
-// 	x1 = xp[which];
-// 	y1 = yp[which];
-// 	x2 = x1 - x3 * p.len;
-// 	y2 = y1 - y3 * p.len;
-// 	plot_line(x1, y1, x2, y2, color);
-
-// 	/* Plot the head of the boid, with the angle of the arrow head
-// 	 * indicating its viewing angle.
-// 	 */
-// 	t = (x1 - x2) / p.len;
-// 	t = (t < -1) ? -1 : (t > 1) ? 1
-// 								: t;
-// 	a = acos(t);
-// 	a = (y1 - y2) < 0 ? -a : a;
-
-// 	/* This is for the right portion of the head. */
-// 	x3 = x1 + cos(a + p.angle / 2) * p.len / 3.0;
-// 	y3 = y1 + sin(a + p.angle / 2) * p.len / 3.0;
-// 	plot_line(x1, y1, x3, y3, color);
-
-// 	/* This is for the left portion of the head. */
-// 	x3 = x1 + cos(a - p.angle / 2) * p.len / 3.0;
-// 	y3 = y1 + sin(a - p.angle / 2) * p.len / 3.0;
-// 	plot_line(x1, y1, x3, y3, color);
-// }
-
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-// int main(int argc, char **argv)
-// {
-// 	extern int plot_mag;
-// 	extern int plot_inverse;
-// 	int i, j;
-
-// 	// LS use struct for default parameters
-
-// 	char* help_string = "
-// Simulate a flock of boids according to rules that determine their 
-// individual behaviors as well as the ``physics'' of their universe. 
-// A boid greedily attempts to apply four rules with respect to its 
-// neighbors: it wants to fly in the same direction, be in the center 
-// of the local cluster of boids, avoid collisions with boids too close, 
-// and maintain a clear view ahead by skirting around others that block 
-// its view.  Changing these rules can make the boids behave like birds, 
-// gnats, bees, fish, or magnetic particles.  See the RULES section of 
-// the manual pages for more details.
-// ";
-
-// 	// LS eliminate global variables by declaring here
-// 	float *xp, *yp, *xv, *yv, *xnv, *ynv;
-
-// 	struct boids::Params params = boids::defaultParams;
-
-// 	OPTION* options = boids::setOptions(params);
-
-
-// 	params.width = 800;
-// 	params.height = 800;
-// 	params.num = 1024;
-
-// 	// LS debug
-// 	fprintf(stderr, "Before options, Number of boids: %d\n", params.num);
-
-// 	get_options(argc, argv, options, help_string);
-
-// 	puts("Gets past get_options");
-
-// 	// LS debug
-// 	fprintf(stderr, "After options, Number of boids: %d\n", params.num);
-
-// 	// LS added this for debugging and Threads set
-// 	fprintf(stderr, "Number of threads: %d\n", params.threads);
-// 	omp_set_num_threads(params.threads);
-
-// 	if (!params.psdump)
-// 	{
-// 		plot_mag = params.mag;
-// 		plot_inverse = params.invert;
-// 		plot_init(params.width, params.height, 2, params.term);
-// 		plot_set_all(0);
-// 	}
-// 	srandom(params.seed);
-
-// 	/* Convert angles to radians. */
-// 	params.angle = params.angle * M_PI / 180.0;
-// 	params.vangle = params.vangle * M_PI / 180.0;
-
-// 	/* Make space for the positions, velocities, and new velocities. */
-// 	xp  = (float*) xmalloc(sizeof(float) * params.num);
-// 	yp  = (float*) xmalloc(sizeof(float) * params.num);
-// 	xv  = (float*) xmalloc(sizeof(float) * params.num);
-// 	yv  = (float*) xmalloc(sizeof(float) * params.num);
-// 	xnv = (float*) xmalloc(sizeof(float) * params.num);
-// 	ynv = (float*) xmalloc(sizeof(float) * params.num);
-
-// 	/* Set to random initial conditions. */
-// 	// LS note: keep sequential or change to parallel random number generation
-// 	for (i = 0; i < params.num; i++)
-// 	{
-// 		xp[i] = random() % params.width;
-// 		yp[i] = random() % params.height;
-// 		xv[i] = random_range(-1.0, 1.0);
-// 		yv[i] = random_range(-1.0, 1.0);
-// 		boids::norm(&xv[i], &yv[i]);
-// 	}
-// 	// LS added timing
-// 	double start, end;
-// 	start = omp_get_wtime();
-
-// 	/* For each time step... */
-// 	for (i = 0; i < params.steps; i++)
-// 	{
-
-// 		boids::compute_new_headings(params, xp, yp, xv, yv, xnv, ynv);
-// 		// /* For each boid, compute its new heading. */
-
-// 		// for(j = 0; j < num; j++) {
-// 		//   compute_new_heading(j, xp, yp, xv, yv, xnv, ynv);
-// 		// }
-
-// 		/* For each boid again... */
-// 		for (j = 0; j < params.num; j++)
-// 		{
-
-// 			/* Undraw the boid. */
-// 			if (!params.psdump)
-// 				boids::draw_boid(params, j, 0, xp, yp, xv, yv);
-
-// 			/* Update the velocity and position. */
-// 			xv[j] = xnv[j];
-// 			yv[j] = ynv[j];
-// 			xp[j] += xv[j] * params.dt;
-// 			yp[j] += yv[j] * params.dt;
-
-// 			/* Wrap around the screen coordinates. */
-// 			if (xp[j] < 0)
-// 				xp[j] += params.width;
-// 			else if (xp[j] >= params.width)
-// 				xp[j] -= params.width;
-// 			if (yp[j] < 0)
-// 				yp[j] += params.height;
-// 			else if (yp[j] >= params.height - 1)
-// 				yp[j] -= params.height;
-
-// 			/* Redraw the boid. */
-// 			if (!params.psdump)
-// 				boids::draw_boid(params, j, 1, xp, yp, xv, yv);
-// 		}
-// 	}
-// 	// LS end timing before some of the plotting
-// 	end = omp_get_wtime();
-// 	fprintf(stderr, "Total time: %f seconds\n", end - start);
-
-// 	printf("%f, %f\n", xp[0], yp[0]);
-
-// 	if (!params.psdump)
-// 		plot_finish();
-
-// 	/* If we want a PS dump of the final configuration, do it. */
-// 	if (params.psdump)
-// 	{
-// 		plot_inverse = 0;
-// 		plot_init(params.width, params.height, 2, "ps");
-// 		for (i = 0; i < params.num; i++)
-// 		{
-// 			boids::draw_boid(params, i, 0, xp, yp, xv, yv);
-// 		}
-// 		plot_finish();
-// 	}
-
-// 	exit(0);
-

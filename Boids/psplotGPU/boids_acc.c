@@ -48,27 +48,16 @@
  *   Permission granted for any use according to the standard GNU
  *   ``copyleft'' agreement provided that the author's comments are
  *   neither modified nor removed.  No warranty is given or implied.
+ * 
+ *  Modified by Libby Shoop (LS) and Ethan Scheelk
+ *  for Peachy Parallel Assignments EduPar 2024
  */
-
-// Modified by Libby Shoop (LS)  for Macalester COllege COMP 445
 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "misc.h"
 #include "omp.h"
-
-// LS The following variables are all global. Make a struct and use in main
-// int width = 640, height = 480, num = 20, len = 20, mag = 1;
-// int seed = 0, invert = 0, steps = 100000000, psdump = 0;
-
-// double angle = 270.0, vangle = 90, minv = 0.5, ddt = 0.95, dt = 3.0;
-// double rcopy = 80, rcent = 30, rviso = 40, rvoid = 15;
-// double wcopy = 0.2, wcent = 0.4, wviso = 0.8, wvoid = 1.0, wrand = 0.0;
-
-// int threads = 1;
-
-// char *term = NULL;
 
 // LS the struct for simulation parameters
 struct Params {
@@ -102,64 +91,6 @@ struct Params {
   char *term;
 };
 
-// char help_string[] = "\
-// Simulate a flock of boids according to rules that determine their \
-// individual behaviors as well as the ``physics'' of their universe. \
-// A boid greedily attempts to apply four rules with respect to its \
-// neighbors: it wants to fly in the same direction, be in the center \
-// of the local cluster of boids, avoid collisions with boids too close, \
-// and maintain a clear view ahead by skirting around others that block \
-// its view.  Changing these rules can make the boids behave like birds, \
-// gnats, bees, fish, or magnetic particles.  See the RULES section of \
-// the manual pages for more details.\
-// ";
-
-// OPTION options[] = {
-//   { "-width",  OPT_INT,     &width,  "Width of the plot in pixels." },
-//   { "-height", OPT_INT,     &height, "Height of the plot in pixels." },
-//   { "-num",    OPT_INT,     &num,    "Number of boids." },
-//   { "-steps",  OPT_INT,     &steps,  "Number of simulated steps." },
-//   { "-seed",   OPT_INT,     &seed,   "Random seed for initial state." },
-//   { "-angle",  OPT_DOUBLE,  &angle,  "Number of viewing degrees." },
-//   { "-vangle", OPT_DOUBLE,  &vangle, "Visual avoidance angle." },
-//   { "-rcopy",  OPT_DOUBLE,  &rcopy,  "Radius for copy vector." },
-//   { "-rcent",  OPT_DOUBLE,  &rcent,  "Radius for centroid vector." },
-//   { "-rvoid",  OPT_DOUBLE,  &rvoid,  "Radius for avoidance vector." },
-//   { "-rviso",  OPT_DOUBLE,  &rviso,  "Radius for visual avoidance vector." },
-//   { "-wcopy",  OPT_DOUBLE,  &wcopy,  "Weight for copy vector." },
-//   { "-wcent",  OPT_DOUBLE,  &wcent,  "Weight for centroid vector." },
-//   { "-wvoid",  OPT_DOUBLE,  &wvoid,  "Weight for avoidance vector." },
-//   { "-wviso",  OPT_DOUBLE,  &wviso,  "Weight for visual avoidance vector." },
-//   // { "-wrand",  OPT_DOUBLE,  &wrand,  "Weight for random vector." },
-//   { "-dt",     OPT_DOUBLE,  &dt,     "Time-step increment." },
-//   { "-ddt",    OPT_DOUBLE,  &ddt,    "Momentum factor (0 < ddt < 1)." },
-//   { "-minv",   OPT_DOUBLE,  &minv,   "Minimum velocity." },
-//   { "-len",    OPT_INT,     &len,    "Tail length." },
-//   { "-psdump", OPT_SWITCH,  &psdump, "Dump PS at the very end?" },
-//   { "-inv",    OPT_SWITCH,  &invert, "Invert all colors?" },
-//   { "-mag",    OPT_INT,     &mag,    "Magnification factor." },
-//   { "-term",   OPT_STRING,  &term,   "How to plot points." },
-//   { "-t",      OPT_INT,     &threads, "Number of threads." },
-//   { NULL,      OPT_NULL,    NULL,    NULL }
-// };
-
-// LS Note: wrand is ignored for simplicity, so we are not generating random
-//          numbers during flight simulation.
-
-/* These are global to avoid passing them around all of time.  They
-   represent the boids (x, y) positions, velocity vectors, and new
-   velocity vectors. */
-
-// LS Note: Better code practice to have these arrays declared 
-//          in main instead of global.
-// double *xp, *yp, *xv, *yv, *xnv, *ynv;
-
-
-/* Some handy macros ... */
-
-// #define LEN(x, y) sqrt(SQR(x) + SQR(y))
-// #define DIST(x1, y1, x2, y2) LEN(((x1)-(x2)),((y1)-(y2)))
-// #define DOT(x1, y1, x2, y2) ((x1)*(x2)+(y1)*(y2))
 
 #pragma acc routine
 double square(double x) {
@@ -182,10 +113,13 @@ double DOT(double x1, double y1, double x2, double y2) {
   return (x1*x2)+(y1*y2);
 }
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-/* Destructively normalize a vector. */
 #pragma acc routine
+/**
+ * @brief Destructively normalize a vector
+ * 
+ * @param x 
+ * @param y 
+ */
 void norm(double *x, double *y)
 {
   double len;
@@ -197,23 +131,27 @@ void norm(double *x, double *y)
   }
 }
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-/* Compute the heading for a particular boid based on its current
-   environment. */
-
-// void compute_new_heading(int which)
-//  LS note: the following function will work on all of the boids.
-//           This is needed so that the outer loop over all boids can
-//           be parallelized for all compilers, especially openacc.
+/**
+ * @brief Computes the hehadings for all boids.
+ * 
+ * LS note: the following function will work on all of the boids.
+ * This is needed so that the outer loop over all boids can
+ * be parallelized for all compilers, especially openacc.
+ * 
+ * @param p 
+ * @param xp 
+ * @param yp 
+ * @param xv 
+ * @param yv 
+ * @param xnv 
+ * @param ynv 
+ */
 void compute_new_headings(struct Params p, double *xp, double *yp, 
                          double *xv, double *yv, 
                          double *xnv, double *ynv)
 {
-  // for each boid, we will examine every other boid
   for (int which = 0; which < p.num; which++)
   {
-    // variables declared in this block become private when using pragmas
     int i, j, k;
     int numcent;
     double xa, ya, xb, yb, xc, yc, xd, yd, xt, yt;
@@ -224,7 +162,6 @@ void compute_new_headings(struct Params p, double *xp, double *yp,
     mx = 0.0, my = 0.0, numcent = 0;
 
     /* This is the maximum distance in which any rule is activated. */
-    // maxr = MAX(p.rviso, MAX(p.rcopy, MAX(p.rcent, p.rvoid)));
     maxr = fmax(p.rviso, fmax(p.rcopy, fmax(p.rcent, p.rvoid)));
 
     /* These two values are used to see if a boid can "see" another
@@ -236,12 +173,6 @@ void compute_new_headings(struct Params p, double *xp, double *yp,
     /* These are the accumulated change vectors for the four rules. */
     xa = ya = xb = yb = xc = yc = xd = yd = 0;
 
-  ///////////////////////////////////////////////////////////////////////
-  // LS NOTE: this calculation is independent in each step
-  // so that it can be distributed among threads, each working on a 
-  // subset of boids. Each boid in outer loop is examining all other boids
-  // in this inner loop.
-  ///////////////////////////////////////////////////////////////////////
     /* For every boid... */
     for(i = 0; i < p.num; i++) {
 
@@ -256,7 +187,7 @@ void compute_new_headings(struct Params p, double *xp, double *yp,
       * are then used for all remaining calculations.
       */
       mindist = 10e10;
-      
+
       for(j = -p.width; j <= p.width; j += p.width)
         for(k = -p.height; k <= p.height; k += p.height) {
           d = DIST(xp[i] + j, yp[i] + k, xp[which], yp[which]);
@@ -336,7 +267,6 @@ void compute_new_headings(struct Params p, double *xp, double *yp,
         */
         u = v = 0;
         if(xtemp != 0 && ytemp != 0) {
-          // u = sqrt(SQR(ytemp / xtemp) / (1 + SQR(ytemp / xtemp)));
           u = sqrt(square(ytemp / xtemp) / (1 + square(ytemp / xtemp)));
           v = -xtemp * u / ytemp;
         }
@@ -542,15 +472,8 @@ OPTION options[] = {
   /* For each time step... */
   for(i = 0; i < params.steps; i++) {
 
-    // printf("0ts%d %f, %f, %f, %f, %f, %f, %d, %d\n", i, xp[0], yp[0], xv[0], yv[0], xnv[0], ynv[0], params.width,params.height);
-
     compute_new_headings(params, xp, yp, xv, yv, xnv, ynv);
-    // /* For each boid, compute its new heading. */
     
-    // for(j = 0; j < num; j++) {
-    //   compute_new_heading(j, xp, yp, xv, yv, xnv, ynv);
-    // }
-    // printf("1ts%d %f, %f, %f, %f, %f, %f, %d, %d\n", i, xp[0], yp[0], xv[0], yv[0], xnv[0], ynv[0], params.width,params.height);
     /* For each boid again... */
     for(j = 0; j < params.num; j++) {
 
