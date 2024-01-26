@@ -24,7 +24,7 @@
  *               in.
  *   
  *      Avoidance: ``Please don't stand so close to me.''
-                  Move away from any close flyers.
+ *                 Move away from any close flyers.
  *   
  *      Visual: move in such a way that the bonehead
  *              obstructing your view no longer interferes.
@@ -424,13 +424,10 @@ OPTION options[] = {
   // LS eliminate global variables by declaring here
   double *xp, *yp, *xv, *yv, *xnv, *ynv;
 
-  // LS debug
-  fprintf(stderr, "Before options, Number of boids: %d\n", params.num);
-
   get_options(argc, argv, options, help_string);
 
-  // LS debug
-  fprintf(stderr, "After options, Number of boids: %d\n", params.num);
+  // LS basic info 
+  fprintf(stderr, "%s, Number of boids: %d, number of steps: %d\n", argv[0], params.num, params.steps);
 
   // LS added this for debugging and Threads set
   fprintf(stderr, "Number of threads: %d\n", params.threads);

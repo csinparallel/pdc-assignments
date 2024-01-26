@@ -434,9 +434,6 @@ OPTION options[] = {
   // LS basic info 
   fprintf(stderr, "%s, Number of boids: %d, number of steps: %d\n", argv[0], params.num, params.steps);
 
-  // LS added this for debugging and Threads set
-  // fprintf(stderr, "Number of threads: %d\n", threads);
-  // omp_set_num_threads(threads);
 
   if(!params.psdump) {
     plot_mag = params.mag;
