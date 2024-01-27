@@ -10,7 +10,7 @@ The suggested starting points for assignments are as follows, with corresponding
 
 2. *PDCCourseOpenACC-X.md* -- this is intended for an advanced course where students have practiced OpenMP and are studying OpenACC. I labeled it PDCCourse because that s where I have used it. It emphasizes the OpenACC additions that can be made to run on the GPU, while keeping the original X display code from FLake. Corresponding code is in the **GPUpsPlot** folder. A sequential version  with Makefile is provided as a starting point; two new versions can be made for: OpenMP and OpenACC.
 
-3. *PDCCourse-TSGL.md* -- like *PDCCourseOpenACC-X.md*, this is intended for an advanced course where students are studying OpenACC, but also requires that they obtain or have access to an installation of TSGL. In this case, some familiarity with C++ is needed. Corresponding code is in the **tsgl** folder. Three different versions of the program can be developed from the original sequential version -- the Makefile has provisions for building three different versions for: OpenMP, OpenACC multicore, OpenACC GPU.
+3. *PDCCourse-TSGL.md* -- like *PDCCourseOpenACC-X.md*, this is intended for an advanced course where students are studying OpenACC, but also requires that they obtain or have access to an installation of TSGL (see below for link). In this case, some familiarity with C++ is needed. Corresponding code is in the **tsgl** folder. Three different versions of the program can be developed from the original sequential version -- the Makefile has provisions for building three different versions for: OpenMP, OpenACC multicore, OpenACC GPU.
 
 For all of these assignments, the code for displaying the boids can be a black box for the students. The concept is to concentrate on the code for updating the position of each boid at each time step and how that can be parallelized.
 
@@ -52,6 +52,10 @@ We have tested the code versions on Ubuntu linux and Windows Subsystem for Linux
 The compiler flags may be different for the version of the OpenACC compilers from NVIDA you have installed. We have used ones for the SDK from Fall of 2023.
 
 The computations on a GPU give slightly different results from the CPU version. We surmise that this is because we are using compilers with different math libraries and that the floating point operations are implemented differently in GPU hardware. This becomes an excellent learning point for advanced students.
+
+## Assignments ask for reports
+
+When I teach PDC, I prefer to emphasize writing reports as an important part of each assignment. In many cases, changing the code to be parallelized is just the first part of the work. Students should learn how to determine when it is worth it to use the parallel version by measuring speedup and examining scalability from experiments that they run. You will see this emphasis in each assignment. Use as you see fit.
 
 ## Scalability
 

@@ -37,7 +37,7 @@ To consider the scalability of your parallel solution, you might want to read ab
 
 ## Starting Point Code
 
-### Directory: OMPpsPlot
+### Directory: GPUpsPlot
 
 The code that you will be working with is a revised version of Flake's original code, which contained C code files that enabled an X11 window to display the boids moving on the canvas.
 
@@ -120,6 +120,33 @@ Here are your primary tasks:
 4. Test your boids_acc solution on varying sets of initial conditions. You can start with something you can observe using the X display window. Next, for this version on the GPU it is interesting to see how you can scale the program to a much larger world (width, height) and a much larger number of boids than can easily be displayed, so you will want to use the command line argument *-term none* as you increase width, height, and number of boids. You can compare times to the OpenMP version under the same conditions. Be sure to try out lots of different conditions to see where the GPU version might be faster. Keep the number of steps at 600 and vary -width, -height, and -num. At some point, keep width and height fixed fairly large and increase the number of boids with -num. You should see a point where using a large enough number of boids runs faster than using 8 threads on the OpenMP CPU version.
 
 ## Write a report
+
+You should report on your solutions and what you have learned about the scalability of them. This should be the kind of report you might write to someone interested in the changes you made and/or how well it performs, including when it is best to use the GPU. You need to provide enough detail that a reader of your report can repeat your work.
+
+
+## Criteria for grading of report
+
+Make a useful, well-written report that describes your code optimizations and the results. Below are some items you should include. You can choose the order in which you present the following ideas in your report, using sections with headers.
+
+
+- Devise a title for your report.
+- Include your name (own your work!)
+
+- Explain briefly what problem you are analyzing and optimizing- orient the reader of your report to the problem.
+
+- Explain the code updates that you made.
+
+- Explain what command line argument(s) you ultimately decided to vary in your experiments. This constitutes your 'problem size' that you change and obtain timing results for, using each version. Explain how you changed it and your observations about performance as it varied.
+
+- Write about the experiments you tried that did not show much scalability and those that did. Write an explanation of why the GPU version performed the way it did.
+
+- Describe your methodology: how many times you ran your experiments and what conditions you used (i.e. cases you tried). Sometimes a table is useful for this.
+
+- You should show regular speedup curves for the OpenMP version for several problem sizes.
+
+- The concept of speedup is different for code on accelerators. Using many smaller, slower cores speeds up code in a different way so that traditional speedup does not apply. Use other methods to show the change in speed, such as bar charts that compare each of the versions for varying problem sizes. 
+
+- Ultimately, what did you learn by parallelizing this example with these different compilers and the difference between the fast CPU and slower cores on the GPU?
 
 
 ## Debugging

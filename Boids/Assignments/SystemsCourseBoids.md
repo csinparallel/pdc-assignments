@@ -18,7 +18,7 @@ More details about weighting each rule and combining them are described in the p
 Flake has functions for displaying the boids as arrows moving at each time step in an X window display. A snapshot is shown in Figure 1.
 
 <figure>
-    <img src="boids-512-w1024-h1024.png"  width="720"
+    <img src="boids-512-w1024-h1024.png"  width="640"
          alt="Boids Display">
     <figcaption>Figure 1. Boids program display</figcaption>
 </figure>
@@ -56,7 +56,7 @@ Eventually, you will want to time your code without showing the display. To do t
     ./boids -width 1024 -height 1024 -num 512 -steps 1000 -term none
 
 
-## Your goal
+## Your goals
 The decision made for each boid about where it should move next at each time step is independent-- it uses the current information about the boids near it to simply update its own new position and velocity. What this means is that the computations made for each boid during a particular time step can be executed in parallel. Multiple threads can split the work of updating each boid's new position, as long as those new positions and velocities are kept separately from the current positions. Once all new positions and velocities have been computed in parallel, then those new positions get copied into the current positions and velocities before starting the next time step.
 
 The boids.c file already has code that sets the number of threads. You do this by using the -t flag, like this:
