@@ -97,7 +97,7 @@ float *xnv; // new x, y velocities
 float *ynv;
 
 // An array of TSGL colors
-ColorFloat arr[] = {WHITE, BLUE, CYAN, YELLOW, GREEN, ORANGE, LIME, PURPLE};
+ColorFloat arr[] = {WHITE, BLUE, CYAN, YELLOW, GREEN, ORANGE, BROWN, PURPLE};
 
 /**
  * @brief Fill the pointer array positions and velocities
@@ -245,6 +245,15 @@ void boidDrawIteration(
 
         boidDraw[i]->updatePosition(xp[i], yp[i]);
         boidDraw[i]->updateDirection(xv[i], yv[i]);
+
+        // debug: use print below with small numer of boids and small iterations
+        // printf("t %d\n", omp_get_thread_num());
+        // color of boid based on version
+        #if defined(OMP) || defined(MC)
+            boidDraw[i]->setColor(arr[omp_get_thread_num() % 8]);
+	    #elif defined(GPU)
+            boidDraw[i]->setColor(arr[0]);
+	    #endif
     }
 }
 
@@ -261,17 +270,20 @@ void tsglScreen(Canvas &canvas)
     initiateBoidDraw(p, boidDraw, xp, yp, xv, yv, canvas);
 
     int step = 0;
+    unsigned complete = 0;
     while (canvas.isOpen())
     {
+        if (!complete) {
         /*
             Slows down the canvas.
             Keep if testing low boid counts
         */
         // canvas.sleep();
 
-        boidDrawIteration(p, xp, yp, xv, yv, xnv, ynv, boidDraw);
-        
-        if (step++ > p.steps) canvas.close();
+            boidDrawIteration(p, xp, yp, xv, yv, xnv, ynv, boidDraw);
+            
+            if (step++ > p.steps) complete = 1;
+        }
     }
 }
 

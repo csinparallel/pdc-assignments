@@ -163,4 +163,13 @@ You can even use these before starting just to get the gist of how the code is w
 
 If there are problems in either version of your code, the positions of the boid will seem wrong, such as really large x or y values, or velocities that get small and/or don't change from time step to time step.
 
+## References
+<a id="1">[1]</a>
+Reynolds, Craig W. (1987)
+Flocks, herds and schools: A distributed behavioral model.
+Proceedings of the 14th annual conference on Computer graphics and interactive techniques, 25-34.
 
+<a id="2">[2]</a>
+Flake, Gary William (2000)
+The computational beauty of nature: Computer explorations of fractals, chaos, complex systems, and adaptation.
+MIT Press. 270-278

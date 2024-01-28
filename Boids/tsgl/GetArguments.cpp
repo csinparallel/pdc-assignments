@@ -145,10 +145,12 @@ void get_arguments(int argc, char *argv[], boids::Params &p, bool& noDraw)
         case HELP:
             // Long print explaining 
             print_help();
+            exit(0);
             break;
         default:
             // getopt has an automatic "argument wrong" command
             print_help();
+            exit(0);
             break;
         }
     }

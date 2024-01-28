@@ -7,6 +7,7 @@ mc: tsglBoidsMC
 
 gpu: tsglBoidsGPU
 
+all: omp mc gpu
 
 ################################################################
 
