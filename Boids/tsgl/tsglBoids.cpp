@@ -260,6 +260,7 @@ void tsglScreen(Canvas &canvas)
     std::vector<std::unique_ptr<boid>> boidDraw(p.num);
     initiateBoidDraw(p, boidDraw, xp, yp, xv, yv, canvas);
 
+    int step = 0;
     while (canvas.isOpen())
     {
         /*
@@ -269,6 +270,8 @@ void tsglScreen(Canvas &canvas)
         // canvas.sleep();
 
         boidDrawIteration(p, xp, yp, xv, yv, xnv, ynv, boidDraw);
+        
+        if (step++ > p.steps) canvas.close();
     }
 }
 
@@ -315,6 +318,7 @@ int main(int argc, char *argv[])
     xnv = new float[p.num];
     ynv = new float[p.num];
 
+    // Run with -noDraw flag for timing
     if (noDraw)
     {
         // Testing, run without canvas for true speed tests

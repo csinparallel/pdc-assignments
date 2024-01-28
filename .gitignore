@@ -2,6 +2,8 @@
 boids
 boids_acc
 tsglBoidsOMP
+tsglBoidsMC
+tsglBoidsGPU
 
 settings.json
 
