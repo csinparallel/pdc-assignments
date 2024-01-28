@@ -15,15 +15,8 @@ X11      = 1
 XINCLUDE = /usr/include/X11
 XLIBS    = /usr/lib/X11
 
-COPTS    = -O3  -Wall  -D__dest_os=unix -fopenmp    # LS added openmp here
+COPTS    = -O3  -Wall  -D__dest_os=unix 
 CC       = gcc
-
-PGCC     = pgcc
-# initial accelerator options
-AOPTS= -fast -ta=tesla:cc75 -Minfo=accel
-
-# accelerator options for managed memory
-AOPTSM= -fast -ta=tesla:cc75,managed -Minfo=all
 
 OMP = -fopenmp 
 #######################################################################
@@ -67,7 +60,6 @@ LDFLAGS  = -L. -L$(XLIBS)
 
 # PROGS    = $(DEMOS)
 PROGS = boids
-ACC_VERSION = boids_acc
 
 #######################################################################
 
@@ -76,14 +68,9 @@ default: $(PROGS)
 $(PROGS): % : %.o libmisc.a
 	$(CC) -o $@ $< $(LDFLAGS) $(LIBS) $(OMP)
 
-$(ACC_VERSION): boids_acc.c libmisc.a
-	$(PGCC) $(AOPTSM) -o $(ACC_VERSION) boids_acc.c $(LDFLAGS) $(LIBS) $(OMP)
-
 libmisc.a: misc.o plot.o $(PLOTOBJS)
 	ar cr $@ $^
 	ranlib $@
-
-# bifur1d.o phase1d.o: maps1d.c
 
 clean:
 	rm -f $(PROGS) *.a *.o

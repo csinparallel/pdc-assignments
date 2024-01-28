@@ -15,10 +15,11 @@ X11      = 1
 XINCLUDE = /usr/include/X11
 XLIBS    = /usr/lib/X11
 
-COPTS    = -O3  -Wall  -D__dest_os=unix -fopenmp    # LS added openmp here
+COPTS    = -O3  -Wall  -D__dest_os=unix 
 CC       = gcc
 
 PGCC     = pgcc
+
 # initial accelerator options
 AOPTS=  -acc=gpu -Minfo=accel
 
