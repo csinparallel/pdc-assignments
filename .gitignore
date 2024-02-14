@@ -39,3 +39,6 @@ settings.json
 *.exe
 *.out
 *.app
+
+# VSCode Errata
+*/c_cpp_properties.json

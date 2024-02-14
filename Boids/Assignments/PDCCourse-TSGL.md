@@ -101,7 +101,7 @@ Examples that you can run (close the window to quit):
     ./tsglBoidsOMP -steps 5000 -num 400 -threads 4
     ./tsglBoidsOMP -steps 5000 -num 400 -threads 8
 
-Note that until you add the parallelism, these all run on one thread. The MC version can be run in a simialr way, as well as the GPU version, like this:
+Note that until you add the parallelism, these all run on one thread. The MC version can be run in a similar way, as well as the GPU version, like this:
 
     ./tsglBoidsGPU -steps 5000 -num 400
 
@@ -124,9 +124,9 @@ You should try to observe how this is possible. 1-dimensional arrays are used fo
         
         once all new headings are computed, 
         for each boid
-            'undraw' the current boid
             copy the new heading values into the arrays holding the curent headings
             draw the boid in its new position
+            update boid color if applicable
 
 Use this pseudocode to help you study the existing code. This general method is found in a great deal of simulations that use time steps to update positions and other attributes of each element in the world being modeled.
 
@@ -153,7 +153,7 @@ As you study the code, you could try to see why only up to 8 different colors ar
 
 If the displaying is working properly on your version, you can run a small test with small number of boids (e.g. 20) and 50-100 steps, you should end at the same output positions whether using 1 thread or multiple threads for the OMP version. This is also true for the MC version and the GPU version. As you use more boids and more time steps, the final display will likely look different between the three versions.
 
-:bulb: **Hints for GPU:**  We have observed a few important aspects of using OpenACC pragmas on code of this complexity. In addition to describing which loop should be split across all the threads available on the GPU, you should describe which loops should not be run in parallel by using **#pragma acc loop seq** above them. It seems to be necessary to use the clause **collapse(1)** on some outer loops (parallel and sequential) so that the compiler gets a hint from you to not collapse the loop. There is one case where using collapse (2) is useful on one inner nested loop. Another important aspect of using the OpenACC compiler on this code is that it is mach better to let it decide when data will need to be moved from the host to the device and back. **In other words, there is no need for pragmas with data directives in this code and using them could cause you problems.**
+:bulb: **Hints for GPU:**  We have observed a few important aspects of using OpenACC pragmas on code of this complexity. In addition to describing which loop should be split across all the threads available on the GPU, you should describe which loops should not be run in parallel by using **#pragma acc loop seq** above them. It seems to be necessary to use the clause **collapse(1)** on some outer loops (parallel and sequential) so that the compiler gets a hint from you to not collapse the loop. There is one case where using collapse (2) is useful on one inner nested loop. Another important aspect of using the OpenACC compiler on this code is that it is much better to let it decide when data will need to be moved from the host to the device and back. **In other words, there is no need for pragmas with data directives in this code and using them could cause you problems.**
 
 Test your solution on varying sets of initial conditions. You can start with something you can observe using the display window. Next, for this version on the GPU it is interesting to see how you can scale the program to a much larger world (width, height) and a much larger number of boids than can easily be displayed, so you will want to use the command line argument *-noDraw* as you increase width, height, and number of boids. You can compare times to the OpenMP version under the same conditions. Be sure to try out lots of different conditions to see where the GPU version might be faster. Keep the number of steps at 600 - 800 and vary -width, -height, and -num. At some point, keep width and height fixed fairly large and increase the number of boids with -num. You should see a point where using a large enough number of boids runs faster than using 8 threads on the OpenMP CPU version. 
 
