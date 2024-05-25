@@ -14,6 +14,10 @@ The suggested starting points for assignments are as follows, with corresponding
 
 For all of these assignments, the code for displaying the boids can be a black box for the students. The concept is to concentrate on the code for updating the position of each boid at each time step and how that can be parallelized.
 
+## Motivation
+
+This [video segment from a PBS show](https://www.youtube.com/watch?v=YazeZp7GeD8&list=PPSV) is quite interesting to explain the basic algorithm, using flocks of starlings. Although the code we have isn't exactly the same, it is quite close to how it has been done by scientists.
+
 ## Readings and original code
 
 The original paper by Craig Reynolds [[1]](#1) is quite approachable and students may find it interesting. I recommend providing a copy for them (I can't include it here for copyright reasons). He is extremely enthusiastic about modeling nature and how he did it.
