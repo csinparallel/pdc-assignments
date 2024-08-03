@@ -364,6 +364,7 @@ inline Matrix<Item> Matrix<Item>::operator+(const Matrix<Item> &mat2) const
 		throw invalid_argument("Matrix::operator+: matrix dimensions mismatch");
 	}
 	Matrix result(myRows, myColumns);
+	unsigned size = myRows * myColumns;
 	// needed because, if one tries to return the same matrix that is mapped to the device,
 	// they get a "terminated by signal 11" error during compilation.
 	Matrix returnMatrix(result);
@@ -380,10 +381,7 @@ inline Matrix<Item> Matrix<Item>::operator+(const Matrix<Item> &mat2) const
 	}
 
 	// copy the results to the output matrix (see note above about "terminated by signal 11")
-	for (int i = 0; i < myRows * myColumns; ++i)
-	{
-		returnMatrix.myMatrix[i] = result.myMatrix[i];
-	}
+	copy(result.myMatrix, result.myMatrix + size, returnMatrix.myMatrix);
 
 	return returnMatrix;
 }
@@ -400,6 +398,7 @@ inline Matrix<Item> Matrix<Item>::transpose() const
 		throw invalid_argument("Matrix::transpose(): empty Matrix!");
 	}
 	Matrix result(myColumns, myRows);
+	unsigned size = myRows * myColumns;
 	// needed because, if one tries to return the same matrix that is mapped to the device,
 	// they get a "terminated by signal 11" error during compilation.
 	Matrix returnMatrix(result);
@@ -416,10 +415,8 @@ inline Matrix<Item> Matrix<Item>::transpose() const
 	}
 
 	// copy the results to the output matrix (see note above about "terminated by signal 11")
-	for (int i = 0; i < myRows * myColumns; ++i)
-	{
-		returnMatrix.myMatrix[i] = result.myMatrix[i];
-	}
+	copy(result.myMatrix, result.myMatrix + size, returnMatrix.myMatrix);
+
 	return returnMatrix;
 }
 
@@ -487,6 +484,7 @@ inline Matrix<Item> Matrix<Item>::operator*(const Matrix<Item> &mat2) const
 		throw invalid_argument("Matrix::operator*(): invalid dimensions");
 	}
 	Matrix mat3(myRows, mat2.getColumns()); // build result Matrix
+	unsigned outputSize = myRows * mat2.getColumns();
 	// needed because, if one tries to return the same matrix that is mapped to the device,
 	// they get a "terminated by signal 11" error during compilation.
 	Matrix returnMatrix(mat3);
@@ -509,10 +507,8 @@ inline Matrix<Item> Matrix<Item>::operator*(const Matrix<Item> &mat2) const
 	}
 
 	// copy the results to the output matrix (see note above about "terminated by signal 11")
-	for (int i = 0; i < myRows * mat2.getColumns(); ++i)
-	{
-		returnMatrix.myMatrix[i] = mat3.myMatrix[i];
-	}
+	copy(mat3.myMatrix, mat3.myMatrix + outputSize, returnMatrix.myMatrix);
+
 	return returnMatrix;
 }
 
