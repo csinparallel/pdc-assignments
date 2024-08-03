@@ -1,0 +1,58 @@
+# Makefile for Linear Algebra Project
+#  by Joel Adams, for CS 112 at Calvin University
+#  Spring 2009.
+# Modified for CSinParallel.org by 
+# Steven McKelvey, Calvin University, Summer 2024.
+
+# Variables
+TARGET	= runTimeTrials
+TESTS 	= tester
+
+EXE		= $(TARGET) $(TESTS)
+
+CC=nvcc
+
+CFLAGS= -Werror all-warnings
+LFLAGS= -lgomp
+
+# Rules
+.PHONY: all clean cleanLogs
+
+all: $(EXE) 
+
+# Link object files
+$(TARGET): $(TARGET).o MatrixTimer.o
+	@echo "Linking $@..."
+	@$(CC) $^ $(LFLAGS) -o $@ \
+	|| { echo "Linking failed for $@"; exit 1; }
+	@echo "Finished building $@"
+	@echo " "
+	
+$(TESTS): $(TESTS).o MatrixTester.o
+	@echo "Linking $@..."
+	@$(CC) $^ $(LFLAGS) -o $@ \
+	|| { echo "Linking failed for $@"; exit 1; }
+	@echo "Finished building $@"
+	@echo " "
+
+# Compile source files to object files
+%.o: %.cu
+	@echo "Compiling $< to $@..."
+	@$(CC) $(CFLAGS) -c $< -o $@ \
+	|| { echo "Compiliation failed for $<"; exit 1; }
+	@echo "Finished compiling $<"
+	@echo " "
+	
+# Dependencies
+MatrixTester.o: MatrixTester.cuh Matrix.cuh
+MatrixTimer.o: MatrixTimer.cuh Matrix.cuh
+tester.o: MatrixTester.cuh
+runTimeTrials.o: MatrixTimer.cuh Matrix.cuh
+
+clean:
+	rm -f $(EXE) a.out *~ *# *.o
+
+#cleans all log files
+cleanLogs:
+	rm -f trials*.txt
+
