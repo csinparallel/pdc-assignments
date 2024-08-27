@@ -42,3 +42,6 @@ settings.json
 
 # VSCode Errata
 */c_cpp_properties.json
+
+# Mac DS_Store files
+.DS_STORE
