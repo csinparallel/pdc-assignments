@@ -1,4 +1,4 @@
-/* circuitSolverCpp11.c solves the Circuit Satisfiability
+/** circuitSolverCpp11.c solves the Circuit Satisfiability
  *  Problem using a C++11 solution using the threads approach.
  *
  *   The particular circuit being tested is "wired" into the
@@ -10,6 +10,7 @@
  *
  * Usage: ./circuitSolverCpp11
  *
+ * NOTE: this sequential solution to the problem may take a long time (several minutes).
  */
 
 #include <iostream>
@@ -36,7 +37,7 @@ int checkCircuit(int id, long bits);
 int main(int argc, char* argv[]) {
     int numThreads = 1;
     int id = 0;
-    unsigned int count = 0;
+    unsigned int total_count = 0;
 
     cout << "\nChecking the circuit with " << numThreads << " thread" 
               << (numThreads == 1 ? "" : "s") << " using inputs 0.."
@@ -45,7 +46,7 @@ int main(int argc, char* argv[]) {
     TimePoint startTime = std::chrono::high_resolution_clock::now();
 
     for (long i = 0; i <= UINT_MAX; ++i) {
-        count += checkCircuit (id, i);
+        total_count += checkCircuit (id, i);
     }
 
     TimePoint endTime = std::chrono::high_resolution_clock::now();
