@@ -9,6 +9,8 @@
  *   Extended to 32 bits by Joel C. Adams, Sept 2013.
  *
  * Usage: ./circuitSolver
+ * 
+ * NOTE: this sequential solution to the problem may take a long time (several minutes) for this particular starter code (cu files + different compiler).
  *
  * HINT: for this problem, it may help to use CUDA's atomic operations.
  *          There are limitations on this based on your CUDA version and GPU compute capability (https://docs.nvidia.com/cuda/cuda-c-programming-guide/)
