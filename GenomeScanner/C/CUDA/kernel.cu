@@ -2,13 +2,13 @@
  * 
  * It includes functions for:
  * - compare_substrings(): a function for comparing two substrings on the device 
- * - launch_kernel(): Defines a function for interfacing with a CUDA kernel
+ * - launch_scan(): Defines a function for interfacing with a CUDA kernel
  *      (to be defined in this file) from files compiled with a non-CUDA compiler
  *
  * @author: Steven McKelvey, Calvin University, January 2025
  * 
  * HINT: the GPU's memory may not be able to hold the entire genome and an array of indices.
- *          Keep this memory constrant in mind when writing code.
+ *          Keep this memory constraint in mind when writing code.
  */
 #include <cuda.h>
 #include <stdio.h>
