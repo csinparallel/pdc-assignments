@@ -1,0 +1,1 @@
+If you intend to install mpi4py in a virtual environment, refer to the files in the "scripts/" directory for instructions.
