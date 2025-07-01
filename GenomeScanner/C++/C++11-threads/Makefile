@@ -8,6 +8,15 @@ OBJS   = $(TARGET).o $(LIB).o
 CC     = mpic++
 CFLAGS = -c -Wall -ansi -pedantic -std=c++17
 LFLAGS = -o $(TARGET)
+OS     = $(shell uname -s)
+
+ifeq ($(OS), Darwin)
+CFLAGS += -Xclang -I/opt/homebrew/opt/libomp/include
+LFLAGS += -L/opt/homebrew/opt/libomp/lib -lomp
+else
+CFLAGS += -pedantic -fopenmp
+LFLAGS += -fopenmp
+endif
 
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) $(LFLAGS)
