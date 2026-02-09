@@ -7,8 +7,8 @@ There are several activities you can complete before this assignment that will h
  Some practice using parallel for loops in OpenMP (see [Chapter 2 of the Intermediate PDC](https://www.learnpdc.org/IntermediatePDC/2-SharedMemoryPatternlets/toctree.html) online textbook)
 - Practice with random number libraries such as the C++ random library or the parallel `trng` library (for trng, see [Chapter 3 of the Intermediate PDC](https://www.learnpdc.org/IntermediatePDC/3-RandomPatterns/toctree.html) online textbook)
 - Some instruction or activity for strong and weak scalability and depicting it with graphs. This repository provides such an activity, including how to use a pre-formatted Google sheet to graph strong and weak scalability: https://github.com/csinparallel/CSinParallel/tree/main/Exemplars/TrapezoidIntegrationScaling 
-- Game of Life OpenMP versions are a prerequisite in-class activity. Code similar to this assignment can be found here:  
-	 https://github.com/csinparallel/CSinParallel/tree/main/Exemplars/StochasticGameOfLife
+- The [Stochastic Game of Life OpenMP activity](https://github.com/csinparallel/CSinParallel/tree/main/Exemplars/StochasticGameOfLife) is a prerequisite in-class activity. The code in that activity is very similar to this assignment: 
+	 
 
 	Note how the organization of the code is very much the same, because the Game of Life is a structured grid problem that uses a stencil, just as this one does (see below). These two together show this type of pattern: very similar code that makes up the bulk of the application.
 
@@ -268,13 +268,14 @@ In many cases of simulations like this where the world is represented by a struc
 
 <img src="./docs_images/matrix_flattened_1.drawio.png" alt="Grid with ghost rows and columns" >
 
-The yellow cells are the ghost row or column values, which get copied from the nearest real cell values during each iteration. The actual grid representing the data for the states of the mushrooms within it are in white. When executing sequentially, the function `calcNewGrid`  starts with cell (1,1) of the 2D grid, which is index 7 in the flattened 1D array representing the grid. In a nested loop, this function goes across each row of white cells to compute a random number and use it to call the `apply_rules` function. Study this function and be sure that you understand the computation of the index into the flattened array, which is the variable called `id`.
+The yellow cells are the ghost row or column values, which get copied from the nearest real cell values during each iteration. The actual grid representing the data for the states of the mushrooms within it are in white. When executing sequentially, the function `calcNewGrid` starts with cell (1,1) of the 2D grid, which is index 7 in the flattened 1D array representing the grid. In a nested loop, this function goes across each row of white cells to compute a random number and use it to call the `apply_rules` function. Study this function and be sure that you understand the computation of the index into the flattened array, which is the variable called `id`.
 
-Suppose we use 2 threads to compute these new values each time- this is a good use of parallelism because applying the rules in one cell and writing to the new grid is completely independent for every cell in an iteration. The key to correctly implementing this nested loop is to realize that for the random number generators, the correct approach is to have each thread work on a column in the flattened version of the array. The following shows this, with thread 0 working on the green cells of the flattened array, and thread 1 working on the blue cells:
+Suppose we use 2 threads to compute these new values each time- this is a good use of parallelism because applying the rules in one cell and writing to the new grid is completely independent for every cell in an iteration. The key to correctly implementing this nested loop is to realize that for the random number generators, the ideal approach is to have each thread work on rows in the flattened version of the array. The following shows this, with thread 0 working on the green cells of the flattened array, and thread 1 working on the blue cells:
 
-<img src="./docs_images/matrix_flattened_2.drawio.png" alt="2 Threads work on columns of Grid" >
+<img src="./docs_images/matrix_flattened_blocked_rows.png" alt="2 Threads work on rows of Grid" >
 
-Your task will be to implement this using OpenMP. The same concept applies to other functions that are iterating over the grid and generating random numbers.
+Your task will be to implement this using OpenMP. The same concept applies to other functions that are iterating over the grid and generating random numbers. Please see the Game of Life cellular automata example, where this use of blocks of rows of random numbers in the grid were created. **HINT**: you will need to incorporate the file called `chunks.h` from that example.
+
 **NOTE:** The function called `update_grid` in the mushroom_seq.cpp file does not need to be parallelized his way, because it doesn't involve random number generation and the nested loop can be collapsed when creating the pragma. Please see the Game of Life cellular automata example for implementation details.
 
 ### Experiments to run
